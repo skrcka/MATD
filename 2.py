@@ -110,5 +110,8 @@ if __name__ == "__main__":
 # kmp_search 814.9461803436279
 # bmh_search 530.0323231220245
 
-# 100 vyhledavani v 50MB textu non boosting x86 cpu
-
+# 100 vyhledavani v 50MB textu arm64 cpu
+# brute_serach 489.08472180366516
+# substring_search 613.1546101570129
+# kmp_search 344.8560268878937
+# bmh_search 202.68151926994324
