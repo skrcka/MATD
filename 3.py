@@ -45,7 +45,7 @@ def get_err_count(word, pattern, max_errors=2):
 
     if best_state == max_state + 1:
         return -1
-    return int(best_state / n - 1)
+    return best_state // n - 1
 
 
 def main():
