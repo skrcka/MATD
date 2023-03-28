@@ -7,14 +7,14 @@ from nltk.stem import PorterStemmer
 def load_text(path: str):
     '''Load text from file'''
 
-    with open(path, 'r') as file:
+    with open(path, 'r', encoding='utf-8') as file:
         text = file.read()
     return text
 
 
 def delete_punctuation(text: str):
     '''Delete punctuation from text'''
-    
+
     text = text.lower()
     text = re.sub(r'\W+', ' ', text)
     return text.strip()
