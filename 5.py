@@ -2,6 +2,7 @@ from os import listdir
 from os.path import isfile, join
 import re
 from nltk.stem import PorterStemmer
+from functools import lru_cache
 
 
 def load_text(path: str):
@@ -29,7 +30,7 @@ def filter_text(text: str):
                  "below", "since", "without", "within", "along", "except", "among", 
                  "beyond", "toward", "until", "upon", "regarding", "amongst", "per", 
                  "throughout", "towards", "versus", "via", "whether"]
-
+   
     text = ' '.join([word for word in text.split() if word not in stop_list])
     return text
 
@@ -43,20 +44,54 @@ def stem_sentences(text):
     return text
 
 
-def main():
-    '''Main function'''
+@lru_cache
+def get_index():
+    '''Get index for all files in gutenberg folder'''
 
     target_folder = 'gutenberg'
     paths = [path for path in listdir(target_folder) if isfile(join(target_folder, path))]
-    text = ''
+    index = {}
     for path in paths:
-        text += f' {load_text(join(target_folder, path))}'
-    text = delete_punctuation(text)
-    print(f'Text without punctuation: {text[:100]}')
-    text = filter_text(text)
-    print(f'Filtered text: {text[:100]}')
-    text = stem_sentences(text)
-    print(f'Stemed text: {text[:100]}')
+        text = f' {load_text(join(target_folder, path))}'
+        text = delete_punctuation(text)
+        text = filter_text(text)
+        text = stem_sentences(text)
+        for word in text.split():
+            word = word.strip()
+            if word not in index:
+                index[word] = set()
+            index[word].add(path)
+    return index
+
+
+def query(index, querystr):
+    '''Search in index'''
+
+    find = querystr.split('AND')
+    all_words = ' '.join(find)
+    all_words = delete_punctuation(all_words)
+    all_words = filter_text(all_words)
+    all_words = stem_sentences(all_words)
+    find = all_words.split()
+
+    found_in = set()
+    for word in find:
+        word = word.strip()
+        if word in index:
+            if found_in:
+                found_in = found_in.intersection(index[word])
+            else:
+                found_in = index[word]
+    return found_in
+
+
+def main():
+    '''Main function'''
+
+    index = get_index()
+    find = 'bellow AND small'
+    found_in = query(index, find)
+    print(found_in)
 
 
 if __name__ == "__main__":
