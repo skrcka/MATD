@@ -63,6 +63,26 @@ def get_index():
             index[word].add(path)
     return index
 
+def write_text(path: str, text: str):
+    '''Load text from file'''
+
+    with open(path, 'w+', encoding='utf-8') as file:
+        file.write(text)
+
+def write_index():
+    '''Get index for all files in gutenberg folder'''
+
+    target_folder = 'gutenberg'
+    target_folder_stemmed = 'gutenberg_stemmed'
+    paths = [path for path in listdir(target_folder) if isfile(join(target_folder, path))]
+
+    for path in paths:
+        text = f' {load_text(join(target_folder, path))}'
+        text = delete_punctuation(text)
+        text = filter_text(text)
+        text = stem_sentences(text)
+        write_text(join(target_folder_stemmed, path), text)
+
 
 def query(index, querystr):
     '''Search in index'''
@@ -88,10 +108,12 @@ def query(index, querystr):
 def main():
     '''Main function'''
 
-    index = get_index()
-    find = 'bellow AND small'
-    found_in = query(index, find)
-    print(found_in)
+    write_index()
+    #index = get_index()
+    #print(paths)
+    #find = 'bellow AND small'
+    #found_in = query(index, find)
+    #print(found_in)
 
 
 if __name__ == "__main__":
