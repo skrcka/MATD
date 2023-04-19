@@ -116,7 +116,6 @@ def compute_term_freq(path, file_indices):
         index = file_indices[file]
         with open(path+os.sep+file, "r", encoding='utf8') as f:
             text = f.read()
-        f.close()
         for word in text.split():
             if word not in frequencies_dict:
                 frequencies_dict[word] = {}
